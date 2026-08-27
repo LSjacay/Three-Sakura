@@ -2,28 +2,23 @@
 // 1. LÓGICA DEL CONTADOR DE TIEMPO
 // ==========================================
 
-// Guardamos el momento exacto en que carga la página
 const startTime = Date.now();
 
 function updateCounter() {
   const currentTime = Date.now();
-  // Diferencia en segundos
   const elapsedTimeSeconds = Math.floor((currentTime - startTime) / 1000);
 
-  // Cálculos de horas, minutos y segundos
   const hours = Math.floor(elapsedTimeSeconds / 3600);
   const minutes = Math.floor((elapsedTimeSeconds % 3600) / 60);
   const seconds = elapsedTimeSeconds % 60;
 
-  // Actualizamos el HTML (formato con 2 dígitos: "05", "09", etc.)
   document.getElementById('hours').textContent = String(hours).padStart(2, '0');
   document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
   document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 }
 
-// Actualizar cada 1 segundo (1000 ms)
 setInterval(updateCounter, 1000);
-updateCounter(); // Ejecución inicial inmediata
+updateCounter();
 
 
 // ==========================================
@@ -36,19 +31,17 @@ const ctx = canvas.getContext('2d');
 let width = (canvas.width = window.innerWidth);
 let height = (canvas.height = window.innerHeight);
 
-// Ajustar el canvas si se cambia el tamaño de la ventana
 window.addEventListener('resize', () => {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
 });
 
-// Tonos rosados para los pétalos
 const petalColors = [
-  '#ffb6c1', // Rosa claro
-  '#ffc0cb', // Rosa pastel
-  '#ffe4e1', // Rosa muy suave
-  '#ff69b4', // Rosa fucsia suave
-  '#fff0f5'  // Blanco rosado
+  '#ffb6c1',
+  '#ffc0cb',
+  '#ffe4e1',
+  '#ff69b4',
+  '#fff0f5'
 ];
 
 class Petal {
@@ -73,7 +66,6 @@ class Petal {
     this.x += Math.sin(this.y * 0.01) + this.speedX;
     this.angle += this.spin;
 
-    // Si sale de la pantalla por abajo, reaparece arriba
     if (this.y > height + 10) {
       this.init();
       this.y = -10;
@@ -93,7 +85,6 @@ class Petal {
   }
 }
 
-// Crear 70 pétalos en pantalla
 const petals = Array.from({ length: 70 }, () => new Petal());
 
 function animate() {
@@ -109,34 +100,51 @@ animate();
 
 
 // ==========================================
-// 3. CONTROL DE REPRODUCCIÓN DE MÚSICA
+// 3. REPRODUCCIÓN AUTOMÁTICA DE MÚSICA
 // ==========================================
 
 const bgMusic = document.getElementById('bgMusic');
 const musicBtn = document.getElementById('musicBtn');
 const musicIcon = document.getElementById('musicIcon');
 
-// Control mediante el botón flotante
-musicBtn.addEventListener('click', () => {
-  if (bgMusic.paused) {
-    bgMusic.play();
-    musicIcon.textContent = '🔊';
-    musicBtn.classList.add('playing');
-  } else {
-    bgMusic.pause();
-    musicIcon.textContent = '🎵';
-    musicBtn.classList.remove('playing');
-  }
-});
+function playAudio() {
+  bgMusic.play().then(() => {
+    if (musicIcon) musicIcon.textContent = '🔊';
+    if (musicBtn) musicBtn.classList.add('playing');
+  }).catch(() => {
+    // Si el navegador bloquea el autoplay inicial, espera interacción
+  });
+}
 
-// Iniciar música automáticamente con el primer clic del usuario en la página
-document.body.addEventListener('click', () => {
+// Intentar reproducir de inmediato al cargar la página
+window.addEventListener('load', playAudio);
+
+// Disparar audio en el primer clic o toque en cualquier lugar
+const handleFirstInteraction = () => {
   if (bgMusic.paused) {
-    bgMusic.play().then(() => {
+    playAudio();
+  }
+  document.removeEventListener('click', handleFirstInteraction);
+  document.removeEventListener('keydown', handleFirstInteraction);
+  document.removeEventListener('touchstart', handleFirstInteraction);
+};
+
+document.addEventListener('click', handleFirstInteraction);
+document.addEventListener('keydown', handleFirstInteraction);
+document.addEventListener('touchstart', handleFirstInteraction);
+
+// Control de pausa/play manual en el botón
+if (musicBtn) {
+  musicBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (bgMusic.paused) {
+      bgMusic.play();
       musicIcon.textContent = '🔊';
       musicBtn.classList.add('playing');
-    }).catch(() => {
-      // Si el navegador bloquea el auto-play, el botón manual sigue funcionando
-    });
-  }
-}, { once: true });
+    } else {
+      bgMusic.pause();
+      musicIcon.textContent = '🎵';
+      musicBtn.classList.remove('playing');
+    }
+  });
+}

@@ -14,16 +14,18 @@
   <canvas id="sakuraCanvas"></canvas>
 
   <main class="main-container">
-    <!-- Panel Central (Glassmorphism) -->
+    <!-- Ilustración del Árbol de Sakura -->
+    <div class="tree-container">
+      <img src="https://svgsilh.com/svg/154446.svg" alt="Árbol Sakura" class="sakura-tree">
+    </div>
+
+    <!-- Panel Central Glassmorphism -->
     <section class="glass-card">
-      
-      <!-- Área de Mensaje Personalizable -->
       <div class="message-area">
         <h1 class="title">Flores de Cerezo para Ti</h1>
         <p class="subtitle">Este contador marca el tiempo exacto que llevas disfrutando de la paz del Sakura.</p>
       </div>
 
-      <!-- Panel del Contador -->
       <div class="counter-area">
         <p class="counter-label">Tiempo transcurrido desde tu llegada:</p>
         
@@ -44,17 +46,16 @@
           </div>
         </div>
       </div>
-
     </section>
   </main>
 
   <!-- Elemento de Audio de Fondo -->
-  <audio id="bgMusic" loop>
+  <audio id="bgMusic" loop autoplay>
     <source src="musica.mp3" type="audio/mpeg">
     Tu navegador no soporta el elemento de audio.
   </audio>
 
-  <!-- Botón Flotante de Control de Música -->
+  <!-- Botón Flotante para Mute/Unmute o Pausa -->
   <button id="musicBtn" class="music-btn" title="Reproducir/Pausar música">
     <span id="musicIcon">🎵</span>
   </button>
