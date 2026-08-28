@@ -1,64 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Tiempo Aquí - Sakura</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flores Amarillas para Ti 🌻</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Canvas en el fondo para la lluvia de pétalos -->
-  <canvas id="sakuraCanvas"></canvas>
-
-  <main class="main-container">
-    <!-- Ilustración del Árbol de Sakura -->
-    <div class="tree-container">
-      <img src="https://svgsilh.com/svg/154446.svg" alt="Árbol Sakura" class="sakura-tree">
+  <div class="container">
+    <div class="text-section">
+      <h2 id="typing-text"></h2>
     </div>
 
-    <!-- Panel Central Glassmorphism -->
-    <section class="glass-card">
-      <div class="message-area">
-        <h1 class="title">Flores de Cerezo para Ti</h1>
-        <p class="subtitle">Este contador marca el tiempo exacto que llevas disfrutando de la paz del Sakura.</p>
-      </div>
+    <div class="canvas-section">
+      <canvas id="treeCanvas" width="500" height="500"></canvas>
+    </div>
 
-      <div class="counter-area">
-        <p class="counter-label">Tiempo transcurrido desde tu llegada:</p>
-        
-        <div class="timer">
-          <div class="time-block">
-            <span id="hours">00</span>
-            <label>Horas</label>
-          </div>
-          <div class="colon">:</div>
-          <div class="time-block">
-            <span id="minutes">00</span>
-            <label>Minutos</label>
-          </div>
-          <div class="colon">:</div>
-          <div class="time-block">
-            <span id="seconds">00</span>
-            <label>Segundos</label>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Elemento de Audio de Fondo -->
-  <audio id="bgMusic" loop autoplay>
-    <source src="musica.mp3" type="audio/mpeg">
-    Tu navegador no soporta el elemento de audio.
-  </audio>
-
-  <!-- Botón Flotante para Mute/Unmute o Pausa -->
-  <button id="musicBtn" class="music-btn" title="Reproducir/Pausar música">
-    <span id="musicIcon">🎵</span>
-  </button>
+    <div class="counter-section">
+      <p>Mi amor por ti comenzó hace...</p>
+      <div id="timer">000 días 00 horas 00 minutos 00 segundos</div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

@@ -1,150 +1,96 @@
-// ==========================================
-// 1. LÓGICA DEL CONTADOR DE TIEMPO
-// ==========================================
+// --- 1. EFECTO DE TEXTO (TYPEWRITER) ---
+const message = `Flores Amarillas para el amor de mi vida:
 
-const startTime = Date.now();
+Si pudiera elegir un lugar seguro, sería a tu lado.
 
-function updateCounter() {
-  const currentTime = Date.now();
-  const elapsedTimeSeconds = Math.floor((currentTime - startTime) / 1000);
+Cuanto más tiempo estoy contigo más te amo.
 
-  const hours = Math.floor(elapsedTimeSeconds / 3600);
-  const minutes = Math.floor((elapsedTimeSeconds % 3600) / 60);
-  const seconds = elapsedTimeSeconds % 60;
+— I Love You! —`;
 
-  document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-  document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-  document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+let textIndex = 0;
+const typingElement = document.getElementById("typing-text");
+
+function typeWriter() {
+  if (textIndex < message.length) {
+    typingElement.innerHTML += message.charAt(textIndex);
+    textIndex++;
+    setTimeout(typeWriter, 50);
+  }
 }
 
-setInterval(updateCounter, 1000);
-updateCounter();
+// --- 2. CONTADOR DE TIEMPO ---
+// Cambia esta fecha por la fecha de tu aniversario o inicio de relación
+const startDate = new Date("2025-08-27T00:00:00");
 
+function updateTimer() {
+  const now = new Date();
+  const diff = now - startDate;
 
-// ==========================================
-// 2. ANIMACIÓN DE PÉTALOS DE SAKURA (CANVAS)
-// ==========================================
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / 1000 / 60) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
 
-const canvas = document.getElementById('sakuraCanvas');
-const ctx = canvas.getContext('2d');
+  document.getElementById("timer").innerText = 
+    `${days} días ${hours.toString().padStart(2, '0')} horas ` +
+    `${minutes.toString().padStart(2, '0')} minutos ` +
+    `${seconds.toString().padStart(2, '0')} segundos`;
+}
 
-let width = (canvas.width = window.innerWidth);
-let height = (canvas.height = window.innerHeight);
+setInterval(updateTimer, 1000);
 
-window.addEventListener('resize', () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-});
+// --- 3. DIBUJO Y CRECIMIENTO DEL ÁRBOL ---
+const canvas = document.getElementById("treeCanvas");
+const ctx = canvas.getContext("2d");
 
-const petalColors = [
-  '#ffb6c1',
-  '#ffc0cb',
-  '#ffe4e1',
-  '#ff69b4',
-  '#fff0f5'
-];
-
-class Petal {
-  constructor() {
-    this.init();
-  }
-
-  init() {
-    this.x = Math.random() * width;
-    this.y = Math.random() * height - height;
-    this.size = Math.random() * 5 + 5;
-    this.speedY = Math.random() * 1 + 0.5;
-    this.speedX = Math.random() * 1 - 0.5;
-    this.angle = Math.random() * 360;
-    this.spin = Math.random() * 0.02 - 0.01;
-    this.color = petalColors[Math.floor(Math.random() * petalColors.length)];
-    this.opacity = Math.random() * 0.5 + 0.3;
-  }
-
-  update() {
-    this.y += this.speedY;
-    this.x += Math.sin(this.y * 0.01) + this.speedX;
-    this.angle += this.spin;
-
-    if (this.y > height + 10) {
-      this.init();
-      this.y = -10;
-    }
-  }
-
-  draw() {
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle);
+function drawFlower(x, y, radius) {
+  // Pétalos amarillos
+  ctx.fillStyle = "#ffd700";
+  for (let i = 0; i < 8; i++) {
     ctx.beginPath();
-    ctx.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.opacity;
+    const angle = (i * Math.PI) / 4;
+    const px = x + Math.cos(angle) * radius;
+    const py = y + Math.sin(angle) * radius;
+    ctx.arc(px, py, radius / 2, 0, Math.PI * 2);
     ctx.fill();
+  }
+  // Centro marrón del girasol
+  ctx.beginPath();
+  ctx.arc(x, y, radius / 2, 0, Math.PI * 2);
+  ctx.fillStyle = "#5c3a21";
+  ctx.fill();
+}
+
+function drawBranch(startX, startY, len, angle, branchWidth) {
+  ctx.beginPath();
+  ctx.save();
+  ctx.strokeStyle = "#5c3a21";
+  ctx.lineWidth = branchWidth;
+  ctx.translate(startX, startY);
+  ctx.rotate((angle * Math.PI) / 180);
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, -len);
+  ctx.stroke();
+
+  if (len < 10) {
+    // Dibujar flor amarilla en el extremo de las ramas pequeñas
+    drawFlower(0, -len, 4);
     ctx.restore();
+    return;
   }
+
+  // Generar ramas secundarias de forma recursiva
+  drawBranch(0, -len, len * 0.75, angle + 20, branchWidth * 0.7);
+  drawBranch(0, -len, len * 0.75, angle - 20, branchWidth * 0.7);
+
+  ctx.restore();
 }
 
-const petals = Array.from({ length: 70 }, () => new Petal());
-
-function animate() {
-  ctx.clearRect(0, 0, width, height);
-  petals.forEach((petal) => {
-    petal.update();
-    petal.draw();
-  });
-  requestAnimationFrame(animate);
-}
-
-animate();
-
-
-// ==========================================
-// 3. REPRODUCCIÓN AUTOMÁTICA DE MÚSICA
-// ==========================================
-
-const bgMusic = document.getElementById('bgMusic');
-const musicBtn = document.getElementById('musicBtn');
-const musicIcon = document.getElementById('musicIcon');
-
-function playAudio() {
-  bgMusic.play().then(() => {
-    if (musicIcon) musicIcon.textContent = '🔊';
-    if (musicBtn) musicBtn.classList.add('playing');
-  }).catch(() => {
-    // Si el navegador bloquea el autoplay inicial, espera interacción
-  });
-}
-
-// Intentar reproducir de inmediato al cargar la página
-window.addEventListener('load', playAudio);
-
-// Disparar audio en el primer clic o toque en cualquier lugar
-const handleFirstInteraction = () => {
-  if (bgMusic.paused) {
-    playAudio();
-  }
-  document.removeEventListener('click', handleFirstInteraction);
-  document.removeEventListener('keydown', handleFirstInteraction);
-  document.removeEventListener('touchstart', handleFirstInteraction);
+// Iniciar animación al cargar la página
+window.onload = () => {
+  typeWriter();
+  updateTimer();
+  
+  // Dibujar el tronco y las ramas (X, Y, Longitud inicial, Ángulo, Ancho)
+  drawBranch(canvas.width / 2, canvas.height - 20, 100, 0, 12);
 };
-
-document.addEventListener('click', handleFirstInteraction);
-document.addEventListener('keydown', handleFirstInteraction);
-document.addEventListener('touchstart', handleFirstInteraction);
-
-// Control de pausa/play manual en el botón
-if (musicBtn) {
-  musicBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (bgMusic.paused) {
-      bgMusic.play();
-      musicIcon.textContent = '🔊';
-      musicBtn.classList.add('playing');
-    } else {
-      bgMusic.pause();
-      musicIcon.textContent = '🎵';
-      musicBtn.classList.remove('playing');
-    }
-  });
-}
